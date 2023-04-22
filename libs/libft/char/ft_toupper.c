@@ -1,23 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amyroshn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/05 16:09:55 by amyroshn          #+#    #+#             */
-/*   Updated: 2021/08/05 18:49:59 by amyroshn         ###   ########.fr       */
+/*   Created: 2021/11/23 11:20:52 by amyroshn          #+#    #+#             */
+/*   Updated: 2021/11/23 11:21:10 by amyroshn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "ft_ssl.h"
+#include "libft.h"
 
-size_t	ft_strlen(const char *str)
+int	ft_toupper(int c)
 {
-	int	length;
-
-	length = 0;
-	if (str)
-		while (str[length])
-			length++;
-	return (length);
+	if (c >= 'a' && c <= 'z')
+		return (c - 32);
+	return (c);
 }

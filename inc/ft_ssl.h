@@ -1,14 +1,18 @@
 #ifndef INC_42_FT_SSL_MD5_FT_SSL_H
 #define INC_42_FT_SSL_MD5_FT_SSL_H
 
+#include "libft.h"
 #include "error_msg.h"
-#include <stdlib.h>
+
 
 #include <stdio.h> //FIXME DELETE
 /*  ALGORITHM HEADERS */
 #include "sha256.h"
 
-enum ARGS {ARG_SHOW_DATA, ARG_QUITE, ARG_REVERSE, ARG_STRING};
+#define ARG_SHOW_DATA   1
+#define ARG_QUITE       2
+#define ARG_REVERSE     4
+#define ARG_STRING      8
 
 typedef const char *(*algorithm_ptr_t)(char *);
 
@@ -20,8 +24,7 @@ typedef struct s_hash_algorithm {
 extern t_hash_algorithm algorithms[];
 
 /*  PROTOTYPES */
-size_t	ft_strlen(const char *str);
-
+void exit_error(const char *msg);
 
 
 #endif //INC_42_FT_SSL_MD5_FT_SSL_H
