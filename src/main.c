@@ -22,7 +22,7 @@ static int process_args(int ac, char **av, int *flags) {
 		size_t arg_len = ft_strlen(av[file_index]);
 		if (av[file_index][0] == '-' && arg_len > 1) {
 			if (av[file_index][1] == 'p') {
-				*flags |= ARG_SHOW_DATA;
+				*flags |= ARG_STDIN;
 			} else if (av[file_index][1] == 'q') {
 				*flags |= ARG_QUITE;
 			} else if (av[file_index][1] == 'r') {
@@ -36,10 +36,10 @@ static int process_args(int ac, char **av, int *flags) {
 		} else if (av[file_index][0] == '-' && arg_len == 1) {
 			exit_error(ERR_USAGE);
 		} else {
-			return file_index;
+			break;
 		}
 	}
-	return -1;
+	return file_index;
 }
 
 int main(int ac, char **av) {
@@ -52,7 +52,7 @@ int main(int ac, char **av) {
 	//FIXME DEBUG START
 	if (flags == 0)
 		ft_printf("No flags detected\n");
-	if (flags & ARG_SHOW_DATA)
+	if (flags & ARG_STDIN)
 		ft_printf("-p detected\n");
 	if (flags & ARG_STRING)
 		ft_printf("-s detected\n");
@@ -61,15 +61,16 @@ int main(int ac, char **av) {
 	if (flags & ARG_QUITE)
 		ft_printf("-q detected\n");
 	//FIXME DEBUG END
-	if (file_index == -1) {
+	if (file_index == ac || flags & ARG_STDIN) {
 		char *data = read_stdin();
 		printf("%s\n", data);
 		free(data);
-	} else {
-		for (; file_index < ac; file_index++) {
-			char *data = read_file(av[file_index]);
-			printf("%d - %s\n\n%s\n", ac - file_index, av[file_index], data);
-			free(data);
-		}
+	} if (flags & ARG_STRING) {
+		
+	}
+	for (; file_index < ac; file_index++) {
+		char *data = read_file(av[file_index]);
+		printf("%d - %s\n\n%s\n", ac - file_index, av[file_index], data);
+		free(data);
 	}
 }

@@ -10,12 +10,12 @@ t_hash_algorithm algorithms[] = {
 		{NULL, NULL}
 };
 
-t_algorithm_ptr getAlgorithmByName(const char *name) {
+t_hash_algorithm *getAlgorithmByName(const char *name) {
 	for (size_t i = 0; algorithms[i].name; i++) {
 		if (!algorithms[i].algorithmPtr)
 			exit_error(ERR_CONFIG_FUNC(algorithms[i].name));
 		if (ft_strcmp(name, algorithms[i].name) == 0)
-			return algorithms[i].algorithmPtr;
+			return &(algorithms[i]);
 	}
 	return NULL;
 }

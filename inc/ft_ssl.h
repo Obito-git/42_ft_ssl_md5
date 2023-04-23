@@ -11,7 +11,7 @@
 /*  ALGORITHM HEADERS */
 #include "sha256.h"
 
-#define ARG_SHOW_DATA   1
+#define ARG_STDIN   1
 #define ARG_QUITE       2
 #define ARG_REVERSE     4
 #define ARG_STRING      8
@@ -27,7 +27,7 @@ extern t_hash_algorithm algorithms[];
 
 /*  PROTOTYPES */
 void exit_error(const char *msg);
-t_algorithm_ptr getAlgorithmByName(const char *name);
+t_hash_algorithm *getAlgorithmByName(const char *name);
 char *read_stdin();
 char *read_file(const char *name);
 
