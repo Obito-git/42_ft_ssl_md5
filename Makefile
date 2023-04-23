@@ -3,7 +3,6 @@ CC = gcc
 
 SRC_PATH=src/
 ALGO_PATH=$(SRC_PATH)algorithms/
-UTILS_PATH=$(SRC_PATH)utils/
 OBJ_PATH=obj/
 LIBS_PATH=libs/
 
@@ -13,7 +12,7 @@ LIBFT_NAME = libft.a
 CFLAGS = -Wall -Werror -Wextra -g3 -Iinc -Iinc/algorithms -I$(LIBFT_PATH)/includes
 
 SRCS = $(SRC_PATH)main.c $(ALGO_PATH)config.c $(ALGO_PATH)sha256.c \
-		$(UTILS_PATH)exit_error.c
+		$(SRC_PATH)exit_error.c $(SRC_PATH)source_processing.c
 OBJ/OBJECTS		=	$(patsubst %.c, obj/%.o, $(SRCS))
 
 all: $(NAME)
@@ -29,7 +28,6 @@ $(LIBFT_NAME):
 
 obj:
 	mkdir -p $(OBJ_PATH)$(ALGO_PATH)
-	mkdir -p $(OBJ_PATH)$(UTILS_PATH)
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)

@@ -4,13 +4,8 @@ static void check_algorithm_name(const char *provided_name) {
 	if (!algorithms[0].name) {
 		exit_error(ERR_CONFIG_EMPTY);
 	}
-	for (size_t i = 0; algorithms[i].name; i++) {
-		if (!algorithms[i].algorithmPtr)
-			exit_error(ERR_CONFIG_FUNC(algorithms[i].name));
-		if (ft_strcmp(provided_name, algorithms[i].name) == 0)
-			return;
-	}
-	//ft_fprintf(STDERR_FILENO, "Error. Can't find %s, list of available algorithms:\n", provided_name);
+	if (getAlgorithmByName(provided_name))
+		return;
 	PRINT_ERR_NOT_FOUND(provided_name);
 	for (size_t i = 0; algorithms[i].name; i++) {
 		ft_fprintf(STDERR_FILENO, "\t- %s\n", algorithms[i].name);
@@ -19,40 +14,41 @@ static void check_algorithm_name(const char *provided_name) {
 }
 
 static int process_args(int ac, char **av, int *flags) {
-	int files_count = 0;
+	int file_index;
 
 	check_algorithm_name(av[1]);
 
-	for (int i = 2; i < ac; i++) {
-		size_t arg_len = ft_strlen(av[i]);
-		if (av[i][0] == '-' && arg_len > 1) {
-			if (av[i][1] == 'p') {
+	for (file_index = 2; file_index < ac; file_index++) {
+		size_t arg_len = ft_strlen(av[file_index]);
+		if (av[file_index][0] == '-' && arg_len > 1) {
+			if (av[file_index][1] == 'p') {
 				*flags |= ARG_SHOW_DATA;
-			} else if (av[i][1] == 'q') {
+			} else if (av[file_index][1] == 'q') {
 				*flags |= ARG_QUITE;
-			} else if (av[i][1] == 'r') {
+			} else if (av[file_index][1] == 'r') {
 				*flags |= ARG_REVERSE;
-			} else if (av[i][1] == 's') {
+			} else if (av[file_index][1] == 's') {
 				*flags |= ARG_STRING;
 			} else {
-				PRINT_ERR_UNKNOWN_ARG(&av[i][1]);
+				PRINT_ERR_UNKNOWN_ARG(&av[file_index][1]);
 				exit(1);
 			}
-		} else if (av[i][0] == '-' && arg_len == 1) {
+		} else if (av[file_index][0] == '-' && arg_len == 1) {
 			exit_error(ERR_USAGE);
 		} else {
-			files_count++;
+			return file_index;
 		}
 	}
-	return files_count;
+	return -1;
 }
 
 int main(int ac, char **av) {
 	int flags = 0;
+	int file_index;
 
 	if (ac < 2)
 		exit_error(ERR_USAGE);
-	process_args(ac, av, &flags);
+	file_index = process_args(ac, av, &flags);
 	//FIXME DEBUG START
 	if (flags == 0)
 		ft_printf("No flags detected\n");
@@ -65,4 +61,15 @@ int main(int ac, char **av) {
 	if (flags & ARG_QUITE)
 		ft_printf("-q detected\n");
 	//FIXME DEBUG END
+	if (file_index == -1) {
+		char *data = read_stdin();
+		printf("%s\n", data);
+		free(data);
+	} else {
+		for (; file_index < ac; file_index++) {
+			char *data = read_file(av[file_index]);
+			printf("%d - %s\n\n%s\n", ac - file_index, av[file_index], data);
+			free(data);
+		}
+	}
 }
