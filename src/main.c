@@ -49,28 +49,33 @@ int main(int ac, char **av) {
 	if (ac < 2)
 		exit_error(ERR_USAGE);
 	file_index = process_args(ac, av, &flags);
+	
+	
 	//FIXME DEBUG START
 	if (flags == 0)
-		ft_printf("No flags detected\n");
+		ft_printf("No flags detected\n\n");
 	if (flags & ARG_STDIN)
-		ft_printf("-p detected\n");
+		ft_printf("-p detected\n\n");
 	if (flags & ARG_STRING)
-		ft_printf("-s detected\n");
+		ft_printf("-s detected\n\n");
 	if (flags & ARG_REVERSE)
-		ft_printf("-r detected\n");
+		ft_printf("-r detected\n\n");
 	if (flags & ARG_QUITE)
-		ft_printf("-q detected\n");
+		ft_printf("-q detected\n\n");
 	//FIXME DEBUG END
+	
+	
 	if (file_index == ac || flags & ARG_STDIN) {
 		char *data = read_stdin();
-		printf("%s\n", data);
+		process_data_debug("from stdin", data, flags);
 		free(data);
 	} if (flags & ARG_STRING) {
-		
+		process_data_debug("from arg", av[file_index++], flags);
 	}
 	for (; file_index < ac; file_index++) {
 		char *data = read_file(av[file_index]);
-		printf("%d - %s\n\n%s\n", ac - file_index, av[file_index], data);
+		if (data)
+			process_data_debug("from file", data, flags);
 		free(data);
 	}
 }
