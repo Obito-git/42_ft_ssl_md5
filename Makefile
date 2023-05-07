@@ -11,8 +11,8 @@ LIBFT_NAME = libft.a
 
 CFLAGS = -Wall -Werror -Wextra -g3 -Iinc -Iinc/algorithms -I$(LIBFT_PATH)/includes
 
-SRCS = $(SRC_PATH)main.c $(ALGO_PATH)config.c $(ALGO_PATH)sha256.c \
-		$(SRC_PATH)exit_error.c $(SRC_PATH)source_processing.c $(SRC_PATH)data_processing.c
+SRCS =  $(wildcard $(ALGO_PATH)*.c) \
+		$(SRC_PATH)main.c $(SRC_PATH)exit_error.c $(SRC_PATH)source_processing.c $(SRC_PATH)data_processing.c
 OBJ/OBJECTS		=	$(patsubst %.c, obj/%.o, $(SRCS))
 
 all: $(NAME)
