@@ -10,11 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "ft_printf.h"
-
-static int	ispattern(char c)
-{
-	return (c == 'c' || c == 's' || c == 'p' || c == 'd'
-		|| c == 'i' || c == 'u' || c == 'x' || c == 'X');
+static char getType(char *s) {
+	if (ft_strncmp(s, "c", 1) == 0)
+		return 'c';
+	if (ft_strncmp(s, "s", 1) == 0)
+		return 's';
+	if (ft_strncmp(s, "p", 1) == 0)
+		return 'p';
+	if (ft_strncmp(s, "d", 1) == 0)
+		return 'd';
+	if (ft_strncmp(s, "i", 1) == 0)
+		return 'i';
+	if (ft_strncmp(s, "x", 1) == 0)
+		return 'x';
+	if (ft_strncmp(s, "X", 1) == 0)
+		return 'X';
+	if (ft_strncmp(s, "u", 1) == 0)
+		return 'u';
+	if (ft_strncmp(s, "bs", 2) == 0)
+		return 'v';
+	if (ft_strncmp(s, "bu", 2) == 0)
+		return 'b';
+	if (ft_strncmp(s, "bc", 2) == 0)
+		return 'n';
+	return (0);
 }
 
 static size_t	find_pattern(t_arg	*ar, int fd)
@@ -29,6 +48,12 @@ static size_t	find_pattern(t_arg	*ar, int fd)
 		return (u_pattern(ar, fd));
 	if (ar->type == 'x' || ar->type == 'X')
 		return (xx_pattern(ar, fd));
+	if (ar->type == 'b')
+		return (bu_pattern(ar, fd));
+	if (ar->type == 'v')
+		return (bs_pattern(ar, fd));
+	if (ar->type == 'n')
+		return (bc_pattern(ar, fd));
 	return (0);
 }
 
@@ -46,45 +71,51 @@ size_t	print_pattern(char type, void *var_content, int fd)
 
 void	*parse_content(va_list *ar, char type)
 {
-	long			*i;
-	unsigned long	*z;
-
+	void			*mem;
+	long			*l;
+	unsigned long	*ul;
+	uint32_t		*uint32;
+	
 	if (ar == NULL)
 		return (NULL);
-	if (type == 'd' || type == 'c' || type == 'i')
+	mem = malloc(100);
+	if (mem && (type == 'd' || type == 'c' || type == 'i' || type == 'n'))
 	{
-		i = (long *) malloc(sizeof(long));
-		*i = va_arg(*ar, int);
-		return ((void *) i);
+		l = mem;
+		*l = va_arg(*ar, int);
+	} 
+	if (mem && (type == 's' || type == 'v')) {
+		free(mem);
+		return ((void *) ft_strdup(va_arg(*ar, char *)));
 	}
-	if (type == 's')
-		return ((void *)ft_strdup(va_arg(*ar, char *)));
-	if (type == 'p' || type == 'u' || type == 'x' || type == 'X')
+	if (mem && (type == 'p' || type == 'u' || type == 'x' || type == 'X'))
 	{
-		z = (unsigned long *) malloc(sizeof(unsigned long));
-		if (type == 'p')
-			*z = va_arg(*ar, unsigned long);
-		else
-			*z = va_arg(*ar, unsigned int);
-		return ((void *) z);
+		ul = mem;
+		*ul = (type == 'p' ? va_arg(*ar, unsigned long) : va_arg(*ar, unsigned int));
 	}
-	return (NULL);
+	if (mem && type == 'b')
+	{
+		uint32 = mem;
+		*uint32 = va_arg(*ar, uint32_t);
+	}
+	return (mem);
 }
 
-size_t	parse(int fd, va_list	*ar, char *str)
+size_t	parse(int fd, va_list *ar, char *str)
 {
 	size_t	i;
 	size_t	printed_chars;
+	char	type;
 
 	i = 0;
 	printed_chars = 0;
 	while (str[i])
 	{
-		if (str[i] == '%' && ispattern(str[i + 1]))
+		if (str[i] == '%' && (type = getType(&str[i + 1])))
 		{
-			printed_chars += print_pattern(str[i + 1],
-					parse_content(ar, str[i + 1]), fd);
-			i += 2;
+			printed_chars += print_pattern(type,
+					parse_content(ar, type), fd);
+			i += ((type == 'v' || type == 'b' || type == 'n') ? 3 : 2);
 			continue ;
 		}
 		if (str[i] == '%' && str[i + 1] == '%')

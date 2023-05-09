@@ -1,10 +1,17 @@
 #include "ft_ssl.h"
 
-void process_data_debug(const char *debug_msg, char *s, char *algoname, int flags)
+void process_data(data_t *data, char *algoname, int flags)
 {
-	(void) flags;
 	t_hash_algorithm *pAlgorithm = getAlgorithmByName(algoname);
-	if (!pAlgorithm)
-		exit_error("ALGO NULL");
-	printf("PROCESSED: [src: %s], [data: %s] [res %s]\n", debug_msg, s, pAlgorithm->algorithmPtr(algoname));
+	char *hash = pAlgorithm->algorithmPtr(data->data, data->len);
+	if (!hash) {
+		ft_fprintf(STDERR_FILENO, "%s\n", ERROR_MALLOC);
+		return;
+	}
+	if (flags & ARG_REVERSE)
+		ft_printf("-r detected\n\n");
+	if (flags & ARG_QUITE)
+		ft_printf("-q detected\n\n");
+	ft_printf("%s\n", hash);
+	free(hash);
 }

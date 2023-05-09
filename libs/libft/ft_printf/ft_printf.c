@@ -19,7 +19,6 @@ t_arg	*get_init_arg(void)
 	if (ar == NULL)
 		return (NULL);
 	ar->type = 'c';
-	ar->isnull = 0;
 	ar->content = NULL;
 	return (ar);
 }

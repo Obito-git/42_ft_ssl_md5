@@ -29,8 +29,6 @@ static int process_args(int ac, char **av, int *flags) {
 				*flags |= ARG_REVERSE;
 			} else if (av[file_index][1] == 's') {
 				*flags |= ARG_STRING;
-			} else if (av[file_index][1] == 'd') {
-				*flags |= ARG_DEBUG;
 			} else {
 				PRINT_ERR_UNKNOWN_ARG(&av[file_index][1]);
 				exit(1);
@@ -47,39 +45,31 @@ static int process_args(int ac, char **av, int *flags) {
 int main(int ac, char **av) {
 	int flags = 0;
 	int file_index;
+	data_t data;
+	data.data = NULL;
+	data.len = 0;
 
 	if (ac < 2)
 		exit_error(ERR_USAGE);
 	file_index = process_args(ac, av, &flags);
-	char *algo_name = av[1]; //FIXME ME DOESN'T PRETTY
-
-
-	//FIXME DEBUG START
-	if (flags == 0)
-		ft_printf("No flags detected\n\n");
-	if (flags & ARG_STDIN)
-		ft_printf("-p detected\n\n");
-	if (flags & ARG_STRING)
-		ft_printf("-s detected\n\n");
-	if (flags & ARG_REVERSE)
-		ft_printf("-r detected\n\n");
-	if (flags & ARG_QUITE)
-		ft_printf("-q detected\n\n");
-	//FIXME DEBUG END
-
 
 	if (file_index == ac || flags & ARG_STDIN) {
-		char *data = read_stdin();
-		process_data_debug("from stdin", data, algo_name, flags);
-		free(data);
+		read_stdin(&data);
+		if (data.data)
+			process_data(&data, av[1], flags);
+		free(data.data);
 	}
 	if (flags & ARG_STRING) {
-		process_data_debug("from arg", av[file_index++], algo_name, flags);
+		data.data = (uchar *) av[file_index];
+		data.len = ft_strlen(av[file_index++]);
+		process_data(&data, av[1], flags);
 	}
 	for (; file_index < ac; file_index++) {
-		char *data = read_file(av[file_index]);
-		if (data)
-			process_data_debug("from file", data, algo_name, flags);
-		free(data);
+		data.data = NULL;
+		data.len = 0;
+		read_file(av[file_index], &data);
+		if (data.data)
+			process_data(&data, av[1], flags);
+		free(data.data);
 	}
 }

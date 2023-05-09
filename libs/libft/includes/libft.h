@@ -18,6 +18,11 @@
 # include <stdbool.h>
 # include <limits.h>
 
+#define BASE_HEX_UPPER	"0123456789ABCDEF"
+#define BASE_HEX_LOWER	"0123456789abcdef"
+#define BASE_DECIMAL	"0123456789"
+#define BASE_BINARY		"01"
+
 typedef struct s_list
 {
 	void			*content;
@@ -54,6 +59,7 @@ void	ft_putnbr_base(int nbr, char *base);
 int		ft_printf(const char *s, ...);
 int		ft_fprintf(int fd, const char *s, ...);
 /* string/ */
+char	*ft_strtobinstr(char *str);
 char	*ft_strchr(const char *str, int c);
 char	*ft_strrchr(const char *str, int c);
 char	*ft_strdup(const char *src);
