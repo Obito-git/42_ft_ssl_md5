@@ -12,13 +12,14 @@ static void read_fd(int fd, data_t *data) {
 		ft_memcpy(&tmp[data->len], buf, bytes_read);
 		free(data->data);
 		data->len += bytes_read;
-		data->data = malloc(sizeof(uchar) * data->len); //FIXME malloc prot
+		data->data = malloc(sizeof(uchar) * data->len + 1); //FIXME malloc prot
 		if (!data->data) {
 			ft_fprintf(STDERR_FILENO, "%s\n", ERROR_MALLOC);
 			data->len = 0;
 			return;
 		}
 		ft_memcpy(data->data, tmp, data->len);
+		data->data[data->len] = '\0';
 	}
 	if (bytes_read == -1) {
 		ft_fprintf(STDERR_FILENO, "%s\n", ERROR_MALLOC);
@@ -28,10 +29,10 @@ static void read_fd(int fd, data_t *data) {
 	}
 }
 
-void read_file(const char *name, data_t *data) {
+void read_file(const char *name, char *algoname, data_t *data) {
 	int fd = open(name, O_RDONLY);
 	if (fd < 0) {
-		ft_fprintf(STDERR_FILENO, "%s\n", strerror(errno));
+		ft_fprintf(STDERR_FILENO, "ft_ssl: %s: %s: %s\n", algoname, name, strerror(errno));
 		return;
 	}
 	read_fd(fd, data);

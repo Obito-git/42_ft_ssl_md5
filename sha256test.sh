@@ -6,7 +6,7 @@ while true; do
   generated_str=$(LC_CTYPE=C tr -dc '[:alnum:][:punct:]' < /dev/urandom | head -c $length)
 
   openssl_hash=$(echo -n "$generated_str" | openssl sha256)
-  ft_ssl_hash=$(echo -n "$generated_str" | ./ft_ssl sha256)
+  ft_ssl_hash=$(echo -n "$generated_str" | ./ft_ssl sha256 -q)
 
   if [ "$openssl_hash" != "$ft_ssl_hash" ]; then
     echo "Hashes do not match for string '$generated_str'"

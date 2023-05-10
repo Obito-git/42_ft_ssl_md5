@@ -52,24 +52,26 @@ int main(int ac, char **av) {
 	if (ac < 2)
 		exit_error(ERR_USAGE);
 	file_index = process_args(ac, av, &flags);
-
-	if (file_index == ac || flags & ARG_STDIN) {
+	if (file_index == ac && !(flags & ARG_STDIN)) //no args
+		flags |= ARG_PURE_STDIN;
+	if (flags & ARG_PURE_STDIN || flags & ARG_STDIN) {
 		read_stdin(&data);
 		if (data.data)
-			process_data(&data, av[1], flags);
+			process_data(&data, av[1], &flags);
 		free(data.data);
 	}
 	if (flags & ARG_STRING) {
 		data.data = (uchar *) av[file_index];
 		data.len = ft_strlen(av[file_index++]);
-		process_data(&data, av[1], flags);
+		process_data(&data, av[1], &flags);
 	}
 	for (; file_index < ac; file_index++) {
 		data.data = NULL;
 		data.len = 0;
-		read_file(av[file_index], &data);
+		data.file_name = av[file_index];
+		read_file(av[file_index], av[1], &data);
 		if (data.data)
-			process_data(&data, av[1], flags);
+			process_data(&data, av[1], &flags);
 		free(data.data);
 	}
 }

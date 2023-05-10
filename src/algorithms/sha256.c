@@ -12,11 +12,12 @@ static const uint32_t k[64] = {
 };
 
 static void sha256_transform_block(sha256_context_t *ctx) {
-	uint32_t a, b, c, d, e, f, g, h, i, j, t1, t2, w[64];
+	uint32_t a, b, c, d, e, f, g, h, i, j, t1, t2;
+	uint32_t w[64];
 	
 	for (i = 0, j = 0; i < 16; i++, j += 4)
 		w[i] = (ctx->data[j] << 24) | (ctx->data[j + 1] << 16) | (ctx->data[j + 2] << 8) | (ctx->data[j + 3]);
-	for ( ; i < 64; i++)
+	for (; i < 64; i++)
 		w[i] = SHA256_DELTA1(w[i - 2]) + w[i - 7] + SHA256_DELTA0(w[i - 15]) + w[i - 16];
 
 	a = ctx->hash[0];
@@ -28,7 +29,7 @@ static void sha256_transform_block(sha256_context_t *ctx) {
 	g = ctx->hash[6];
 	h = ctx->hash[7];
 
-	for (i = 0; i < 64; ++i) {
+	for (i = 0; i < 64; i++) {
 		t1 = h + SHA256_SIG1(e) + SHA256_CH(e, f, g) + k[i] + w[i];
 		t2 = SHA256_SIG0(a) + SHA256_MAJ(a, b, c);
 		h = g;
@@ -76,7 +77,7 @@ static void sha256_transform_last(sha256_context_t *ctx) {
 		while (i < SHA256_MAX_BLOCK_BYTES)
 			ctx->data[i++] = 0x00;
 		sha256_transform_block(ctx);
-		memset(ctx->data, 0, 56);
+		ft_memset(ctx->data, 0, 56);
 	}
 
 
